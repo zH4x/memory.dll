@@ -619,7 +619,7 @@ namespace Memory
         }
         #endregion
 
-        private UIntPtr getCode(string name, string path, int size = 4)
+        private UIntPtr getCode(string name, string path, int size = 16)
         {
             string theCode = LoadCode(name, path);
             if (theCode == "")
@@ -632,57 +632,57 @@ namespace Memory
 
             if (newOffsets.Contains(','))
             {
-                List<int> offsetsList = new List<int>();
+                List<long> offsetsList = new List<long>();
 
                 string[] newerOffsets = newOffsets.Split(',');
                 foreach (string oldOffsets in newerOffsets)
                 {
-                    offsetsList.Add(Convert.ToInt32(oldOffsets, 16));
+                    offsetsList.Add(Convert.ToInt64(oldOffsets, 16));
                 }
-                int[] offsets = offsetsList.ToArray();
+                long[] offsets = offsetsList.ToArray();
 
                 if (theCode.Contains("base") || theCode.Contains("main"))
-                    ReadProcessMemory(pHandle, (UIntPtr)((int)mainModule.BaseAddress + offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
+                    ReadProcessMemory(pHandle, (UIntPtr)((long)mainModule.BaseAddress + offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
                 else if (!theCode.Contains("base") && !theCode.Contains("main") && theCode.Contains("+"))
                 {
                     string[] moduleName = theCode.Split('+');
                     IntPtr altModule = modules[moduleName[0]];
-                    ReadProcessMemory(pHandle, (UIntPtr)((int)altModule + offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
+                    ReadProcessMemory(pHandle, (UIntPtr)((long)altModule + offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
                 }
                 else
                     ReadProcessMemory(pHandle, (UIntPtr)(offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
 
-                uint num1 = BitConverter.ToUInt32(memoryAddress, 0);
+                ulong num1 = BitConverter.ToUInt64(memoryAddress, 0);
 
                 UIntPtr base1 = (UIntPtr)0;
 
                 for (int i = 1; i < offsets.Length; i++)
                 {
-                    base1 = new UIntPtr(num1 + Convert.ToUInt32(offsets[i]));
+                    base1 = new UIntPtr(num1 + Convert.ToUInt64(offsets[i]));
                     ReadProcessMemory(pHandle, base1, memoryAddress, (UIntPtr)size, IntPtr.Zero);
-                    num1 = BitConverter.ToUInt32(memoryAddress, 0);
+                    num1 = BitConverter.ToUInt64(memoryAddress, 0);
                 }
                 return base1;
             }
             else
             {
-                int trueCode = Convert.ToInt32(newOffsets, 16);
+                long trueCode = Convert.ToInt64(newOffsets, 16);
 
                 if (theCode.Contains("base") || theCode.Contains("main"))
-                    ReadProcessMemory(pHandle, (UIntPtr)((int)mainModule.BaseAddress + trueCode), memoryAddress, (UIntPtr)size, IntPtr.Zero);
+                    ReadProcessMemory(pHandle, (UIntPtr)((long)mainModule.BaseAddress + trueCode), memoryAddress, (UIntPtr)size, IntPtr.Zero);
                 else if (!theCode.Contains("base") && !theCode.Contains("main") && theCode.Contains("+"))
                 {
                     string[] moduleName = theCode.Split('+');
                     IntPtr altModule = modules[moduleName[0]];
-                    ReadProcessMemory(pHandle, (UIntPtr)((int)altModule + trueCode), memoryAddress, (UIntPtr)size, IntPtr.Zero);
+                    ReadProcessMemory(pHandle, (UIntPtr)((long)altModule + trueCode), memoryAddress, (UIntPtr)size, IntPtr.Zero);
                 }
                 else
                     ReadProcessMemory(pHandle, (UIntPtr)(trueCode), memoryAddress, (UIntPtr)size, IntPtr.Zero);
 
-                uint num1 = BitConverter.ToUInt32(memoryAddress, 0);
+                ulong num1 = BitConverter.ToUInt64(memoryAddress, 0);
                 
                 UIntPtr base1 = new UIntPtr(num1);
-                num1 = BitConverter.ToUInt32(memoryAddress, 0);
+                num1 = BitConverter.ToUInt64(memoryAddress, 0);
                 return base1;
             }
         }
