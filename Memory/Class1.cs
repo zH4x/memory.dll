@@ -228,13 +228,13 @@ namespace Memory
             if (String.IsNullOrEmpty(newOffset))
                 return (UIntPtr)0;
 
-            int intToUint = 0;
+            long intToUint = 0;
 
-            if (Convert.ToInt32(newOffset, 16) > 0)
-                intToUint = Convert.ToInt32(newOffset, 16);
+            if (Convert.ToInt64(newOffset, 16) > 0)
+                intToUint = Convert.ToInt64(newOffset, 16);
 
             if (theCode.Contains("base") || theCode.Contains("main"))
-                uintValue = (UIntPtr)((int)mainModule.BaseAddress + intToUint);
+                uintValue = (UIntPtr)((long)mainModule.BaseAddress + intToUint);
             else if (!theCode.Contains("base") && !theCode.Contains("main") && theCode.Contains("+"))
             {
                 string[] moduleName = theCode.Split('+');
@@ -244,7 +244,7 @@ namespace Memory
 
                 Debug.WriteLine("module=" + moduleName[0]);
                 IntPtr altModule = modules[moduleName[0]];
-                uintValue = (UIntPtr)((int)altModule + intToUint);
+                uintValue = (UIntPtr)((long)altModule + intToUint);
             }
             else
                 uintValue = (UIntPtr)intToUint;
@@ -274,6 +274,10 @@ namespace Memory
                     sb.Append(c);
             }
             return sb.ToString();
+        }
+
+        public IntPtr moveAddress(string name, string path, int move) {
+            return unchecked((IntPtr)(long)(ulong)getCode(name, path)) + move;
         }
 
         public IntPtr AoBScan(uint min, int length, string code, string file = "")
@@ -341,11 +345,11 @@ namespace Memory
                 return "";
         }
 
-        public int readUIntPtr(UIntPtr code)
+        public long readUIntPtr(UIntPtr code)
         {
             byte[] memory = new byte[4];
             if (ReadProcessMemory(pHandle, code, memory, (UIntPtr)4, IntPtr.Zero))
-                return BitConverter.ToInt32(memory, 0);
+                return BitConverter.ToInt64(memory, 0);
             else
                 return 0;
         }
