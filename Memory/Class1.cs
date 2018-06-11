@@ -603,8 +603,12 @@ namespace Memory
 			    count++;
 		    }
 
-		    return rString;
+
+		    string s = new string(rString.ToCharArray());
+		    return String.Join("", s.Split(new char[] {'\0'}, StringSplitOptions.RemoveEmptyEntries))
+			    .Replace(stopAtChar.ToString(), "");
 	    }
+
 
 		public int readUIntPtr(UIntPtr code)
         {
