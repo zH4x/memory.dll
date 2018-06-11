@@ -584,7 +584,28 @@ namespace Memory
                 return "";
         }
 
-        public int readUIntPtr(UIntPtr code)
+	    public string readStringUntilDelimiter(string code, string delimiter = "\0", int limitBytesRead = 255)
+	    {
+		    string rByte = ""
+
+		    string rString = "";
+		    int count = 0;
+		    string newAddress = code;
+
+		    while (rByte != delimiter)
+		    {
+			    if (count >= limitBytesRead) break;
+			    rByte = readString(newAddress, "", 1);
+			    newAddress = "0x" + (Convert.ToInt64(newAddress.Replace("0x", string.Empty)) + 1).ToString("X");
+			    rString += rByte;
+			    count++;
+		    }
+
+		    return rString;
+	    }
+
+
+		public int readUIntPtr(UIntPtr code)
         {
             byte[] memory = new byte[4];
             if (ReadProcessMemory(pHandle, code, memory, (UIntPtr)4, IntPtr.Zero))
