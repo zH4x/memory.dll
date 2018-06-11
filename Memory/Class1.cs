@@ -592,7 +592,7 @@ namespace Memory
 		/// <param name="limitBytesRead">Max amount of bytes to be read to prevent reading the entire module incase the 'stopAtChar' character is never present</param>
 		/// <param name="ignoreNullTerminatedChars">Specifies if nullterminated chars are to be added to the return string or not</param>
 		/// <returns></returns>
-		public string readStringUntilChar(string code, char stopAtCharacer = '\0', int limitBytesRead = 255, bool ignoreNullTerminatedChars = true)
+		public string readStringUntilChar(string code, char stopAtCharacer = '@', int limitBytesRead = 255, bool ignoreNullTerminatedChars = true)
 	    {
 		    var startAddress = long.Parse(code.Replace("0x", string.Empty), NumberStyles.HexNumber);
 		    var stopAddress = startAddress + limitBytesRead;
@@ -616,7 +616,7 @@ namespace Memory
 	    /// Reads a string value from param 'code' to whatver location the first instance of the null char literal has
 	    /// </summary>
 	    /// <param name="code">Start address where you read from in Hex (0xFFFFFFFFF)</param>
-	    /// <param name="limitBytesRead">Max amount of bytes to be read to prevent reading the entire module incase the 'stopAtChar' character is never present</param>
+	    /// <param name="limitBytesRead">Max amount of bytes to be read to prevent reading the entire module incase the nulltermination literal character is never present</param>
 	    /// <returns></returns>
 		public string readNullTerminatedString(string code, int limitBytesRead = 255)
 	    {
