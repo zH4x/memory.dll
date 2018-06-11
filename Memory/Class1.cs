@@ -600,7 +600,6 @@ namespace Memory
 
 		    for (var address = startAddress; address < stopAddress; address++)
 		    {
-			    //var currentAddressToRead = "0x" + address.ToString("X");
 			    var currentReadString = readString($"0x{address:X}", string.Empty, 1);
 			    var currentReadChar = char.Parse(currentReadString);
 
@@ -612,6 +611,30 @@ namespace Memory
 
 		    return returnedString.ToString();
 	    }
+
+	    /// <summary>
+	    /// Reads a string value from param 'code' to whatver location the first instance of the null char literal has
+	    /// </summary>
+	    /// <param name="code">Start address where you read from in Hex (0xFFFFFFFFF)</param>
+	    /// <param name="limitBytesRead">Max amount of bytes to be read to prevent reading the entire module incase the 'stopAtChar' character is never present</param>
+	    /// <returns></returns>
+		public string readNullTerminatedString(string code, int limitBytesRead = 255)
+	    {
+			var startAddress = long.Parse(code.Replace("0x", string.Empty), NumberStyles.HexNumber);
+		    var stopAddress = startAddress + limitBytesRead;
+		    var returnedString = new StringBuilder();
+
+		    for (var address = startAddress; address < stopAddress; address++)
+		    {
+			    var currentReadString = readString($"0x{address:X}", string.Empty, 1);
+			    var currentReadChar = char.Parse(currentReadString);
+
+			    if (currentReadChar == '\0') break;
+			    returnedString.Append(currentReadString);
+		    }
+
+		    return returnedString.ToString();
+		}
 
 
 		public int readUIntPtr(UIntPtr code)
