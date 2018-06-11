@@ -584,25 +584,27 @@ namespace Memory
                 return "";
         }
 
-	    public string readStringUntilDelimiter(string code, string delimiter = "\0", int limitBytesRead = 255)
+	    public string readStringUntilDelimiter(string code, char delimiter = '\0', int limitBytesRead = 255)
 	    {
 		    string rByte = "";
 		    string rString = "";
 		    int count = 0;
 		    string newAddress = code;
+		    char byteAsChar = '\0';
 
-		    while (rByte != delimiter)
+			while (byteAsChar != delimiter)
 		    {
 			    if (count >= limitBytesRead) break;
 			    rByte = readString(newAddress, "", 1);
-			    newAddress = "0x" + (Convert.ToInt64(newAddress.Replace("0x", string.Empty)) + 1).ToString("X");
+			    char.TryParse(rByte, out byteAsChar);
+				newAddress = newAddress.Replace("0x", string.Empty);
+				newAddress = "0x" + (long.Parse(newAddress, NumberStyles.HexNumber) + 1).ToString("X");
 			    rString += rByte;
 			    count++;
 		    }
 
 		    return rString;
 	    }
-
 
 		public int readUIntPtr(UIntPtr code)
         {
