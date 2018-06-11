@@ -586,8 +586,7 @@ namespace Memory
 
 	    public string readStringUntilDelimiter(string code, string delimiter = "\0", int limitBytesRead = 255)
 	    {
-		    string rByte = ""
-
+		    string rByte = "";
 		    string rString = "";
 		    int count = 0;
 		    string newAddress = code;
