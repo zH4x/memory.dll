@@ -584,7 +584,7 @@ namespace Memory
                 return "";
         }
 
-	    public string readStringUntilDelimiter(string code, char delimiter = '\0', int limitBytesRead = 255)
+	    public string readStringUntilChar(string code, char stopAtChar = '\0', int limitBytesRead = 255)
 	    {
 		    string rByte = "";
 		    string rString = "";
@@ -592,7 +592,7 @@ namespace Memory
 		    string newAddress = code;
 		    char byteAsChar = '\0';
 
-			while (byteAsChar != delimiter)
+			while (byteAsChar != stopAtChar)
 		    {
 			    if (count >= limitBytesRead) break;
 			    rByte = readString(newAddress, "", 1);
