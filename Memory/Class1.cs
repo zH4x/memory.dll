@@ -584,7 +584,6 @@ namespace Memory
                 return "";
         }
 
-
 		/// <summary>
 		/// Reads a string value from param 'code' to whatver location character 'stopAtChar' has in memory
 		/// </summary>
@@ -601,8 +600,8 @@ namespace Memory
 
 		    for (var address = startAddress; address < stopAddress; address++)
 		    {
-			    var currentAddressToRead = "0x" + address.ToString("X");
-			    var currentReadString = readString(currentAddressToRead, string.Empty, 1);
+			    //var currentAddressToRead = "0x" + address.ToString("X");
+			    var currentReadString = readString($"0x{address:X}", string.Empty, 1);
 			    var currentReadChar = char.Parse(currentReadString);
 
 			    if (currentReadChar == stopAtCharacer) break;
