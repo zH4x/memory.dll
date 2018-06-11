@@ -591,29 +591,27 @@ namespace Memory
 		/// <param name="code">Start address where you read from in Hex (0xFFFFFFFFF)</param>
 		/// <param name="stopAtCharacter">The char to stop at when encountered during the reading of the memory</param>
 		/// <param name="limitBytesRead">Max amount of bytes to be read to prevent reading the entire module incase the 'stopAtChar' character is never present</param>
+		/// <param name="ignoreNullTerminatedChars">Specifies if nullterminated chars are to be added to the return string or not</param>
 		/// <returns></returns>
-		public string readStringUntilChar(string code, char stopAtCharacter = '\0', int limitBytesRead = 255)
-		{
-			string readByteAsCharacter = string.Empty;
-			string returnString = string.Empty;
-			int countBytesRead = 0;
-		    string nextAddressToRead = code;
-		    char byteAsChar = '\0';
+		public string readStringUntilChar(string code, char stopAtCharacer = '\0', int limitBytesRead = 255, bool ignoreNullTerminatedChars = true)
+	    {
+		    var startAddress = long.Parse(code.Replace("0x", string.Empty), NumberStyles.HexNumber);
+		    var stopAddress = startAddress + limitBytesRead;
+			var returnedString = new StringBuilder();
 
-			while (byteAsChar != stopAtCharacter)
+		    for (var address = startAddress; address < stopAddress; address++)
 		    {
-			    if (countBytesRead >= limitBytesRead) break;
+			    var currentAddressToRead = "0x" + address.ToString("X");
+			    var currentReadString = readString(currentAddressToRead, string.Empty, 1);
+			    var currentReadChar = char.Parse(currentReadString);
 
-			    readByteAsCharacter = readString(nextAddressToRead, "", 1);
-			    char.TryParse(readByteAsCharacter, out byteAsChar);
-			    nextAddressToRead = "0x" + (long.Parse(nextAddressToRead.Replace("0x", string.Empty), NumberStyles.HexNumber) + 1).ToString("X");
-			    returnString += readByteAsCharacter;
-			    countBytesRead++;
+			    if (currentReadChar == stopAtCharacer) break;
+			    if (currentReadChar == '\0' && ignoreNullTerminatedChars) continue;
+
+				returnedString.Append(currentReadString);
 		    }
 
-			// Removes all '\0' from and strips 'stopAtCharacter' from the result string as that one is included in the final return string
-		    return String.Join("", returnString.Split(new [] {'\0'}, StringSplitOptions.RemoveEmptyEntries))
-			    .Replace(stopAtCharacter.ToString(), string.Empty);
+		    return returnedString.ToString();
 	    }
 
 
